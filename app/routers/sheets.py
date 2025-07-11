@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.models import SheetForm, SheetCreateRequest
@@ -8,9 +8,9 @@ from app.config import settings
 from app.database import get_database
 import httpx
 
-router = APIRouter(prefix="/sheets", tags=["Sheets"])
+router = APIRouter(tags=["Sheets"])
 
-@router.post("/", response_model=SheetForm)
+@router.post("/", response_model=SheetForm, summary="Cria uma nova ficha")
 async def create_sheet(
     request: Dict[str, Any],  # Recebe o JSON bruto
     db=Depends(get_database)
@@ -68,7 +68,7 @@ async def create_sheet(
         traceback.print_exc()  # Log detalhado para debug
         raise HTTPException(500, detail=f"Erro ao criar ficha: {str(e)}")
 
-@router.get("/template/")
+@router.get("/template/", summary="Busca templates disponíveis")
 async def get_templates():
     try:
         async with httpx.AsyncClient() as client:
@@ -82,14 +82,26 @@ async def get_templates():
         print(f"Erro inesperado: {e}")
         raise HTTPException(status_code=500, detail="Erro interno no servidor.")
 
-@router.get("/{sheet_id}")
+@router.get("/{sheet_id}", response_model=SheetForm, summary="Busca uma ficha pelo ID")
 async def get_sheet(sheet_id: str, db=Depends(get_database)):
-    sheet = await get_template_from_service_by_id(sheet_id)
+    sheet = await db.sheets.find_one({"_id": ObjectId(sheet_id)})
     if not sheet:
         raise HTTPException(status_code=404, detail="Ficha não encontrada")
     return sheet
 
-@router.get("/by-name/{system_name}")
+@router.get("/", response_model=List[SheetForm], summary= "Lista todas as fichas") # Listar todas as fichas
+async def get_sheets(db=Depends(get_database)):
+    sheets = await db.sheets.find().to_list(100)
+    return sheets
+
+@router.get("/by-user_id/{user_id}", response_model=List[SheetForm], summary="Busca um template pelo ID do usuário")
+async def get_sheet_by_user_id(user_id: str, db=Depends(get_database)):
+    sheets = await db.sheets.find({"owner_id": user_id}).to_list(100)
+    if not sheets:
+        raise HTTPException(status_code=404, detail="Ficha não encontrada")
+    return sheets
+
+@router.get("/by-name/{system_name}", response_model=SheetForm, summary="Busca um template pelo nome do sistema")
 async def get_sheet_by_name(system_name: str, db=Depends(get_database)):
     sheet = await get_template_from_service_by_name(system_name)
     if not sheet:
