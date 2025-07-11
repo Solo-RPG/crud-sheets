@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from app.models import SheetForm, SheetCreateRequest
 from app.sheets_rules import create_sheet_from_template
 from app.dependencies import fetch_template, get_template_from_service_by_name, get_template_from_service_by_id
@@ -12,7 +12,22 @@ router = APIRouter(tags=["Sheets"])
 
 @router.post("/", response_model=SheetForm, summary="Cria uma nova ficha")
 async def create_sheet(
-    request: Dict[str, Any],  # Recebe o JSON bruto
+    request: Dict[str, Any] = Body(
+        ...,
+        example={
+            "template_id": "686d5b64330ef6a44fadc9e9",
+            "owner_id": "1234567890abcdef",
+            "fields": {
+                "nome": "Tharion Martelo Flamejante",
+                "classe": "guerreiro",
+                "atributos": {
+                    "força": {"valor": 18, "bônus": 4},
+                    "destreza": {"valor": 10, "bônus": 0},
+                    "carisma": {"valor": 8, "bônus": -1}
+                }
+            }
+        }
+    ),
     db=Depends(get_database)
 ):
     try:
