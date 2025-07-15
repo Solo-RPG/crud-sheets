@@ -122,3 +122,29 @@ async def get_sheet_by_name(system_name: str, db=Depends(get_database)):
     if not sheet:
         raise HTTPException(status_code=404, detail="Ficha não encontrada")
     return sheet
+
+@router.delete("/{sheet_id}", summary="Deleta uma ficha pelo ID")
+async def delete_sheet(sheet_id: str, db=Depends(get_database)):
+    result = await db.sheets.delete_one({"_id": ObjectId(sheet_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Ficha não encontrada")
+    return {"detail": "Ficha deletada com sucesso"}
+
+@router.put("/{sheet_id}", response_model=SheetForm, summary="Atualiza uma ficha pelo ID")
+async def update_sheet(
+    sheet_id: str,
+    request: Dict[str, Any] = Body(...),
+    db=Depends(get_database)
+):
+    update_data = {k: v for k, v in request.items() if v is not None}
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="Nenhum dado para atualizar fornecido")
+
+    result = await db.sheets.update_one({"_id": ObjectId(sheet_id)}, {"$set": update_data})
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Ficha não encontrada ou nenhum dado foi alterado")
+    
+    updated_sheet = await db.sheets.find_one({"_id": ObjectId(sheet_id)})
+    return updated_sheet
