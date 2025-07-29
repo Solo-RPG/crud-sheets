@@ -18,6 +18,7 @@ class SheetForm(BaseModel):
     template_system_name: str  # Nome do sistema de RPG
     template_system_version: str  # Versão do sistema de RPG
     owner_id: str  # ID do dono da ficha
+    character_id: Optional[str] = None # ID do personagem associado (Java)
     data: Dict[str, SheetField]  # Dados dinâmicos
 
 class SheetCreateRequest(BaseModel):
