@@ -8,6 +8,8 @@ from app.config import settings
 from app.database import get_database
 import httpx
 
+UUID_REGEX = r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'
+
 router = APIRouter(tags=["Sheets"])
 
 @router.post("/", response_model=SheetForm, summary="Cria uma nova ficha")
@@ -83,7 +85,7 @@ async def create_sheet(
         traceback.print_exc()  # Log detalhado para debug
         raise HTTPException(500, detail=f"Erro ao criar ficha: {str(e)}")
 
-@router.get("/template/", summary="Busca templates disponíveis")
+@router.get("/templates/", summary="Busca templates disponíveis")
 async def get_templates():
     try:
         async with httpx.AsyncClient() as client:
