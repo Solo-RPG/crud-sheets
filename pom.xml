@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.org.solorpg</groupId>
-	<artifactId>rpgapp</artifactId>
+	<artifactId>crudSheets</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>rpgapp</name>
-	<description>Projeto do App Web de RPG do Solo RPG</description>
+	<name>crudSheets</name>
+	<description>Serviço de Fichas do Solo RPG Web App</description>
 	<url/>
 	<licenses>
 		<license/>

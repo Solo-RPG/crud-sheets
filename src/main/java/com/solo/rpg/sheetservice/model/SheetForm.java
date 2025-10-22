@@ -1,5 +1,9 @@
 package com.solo.rpg.sheetservice.model;
 
+import com.solo.rpg.sheetservice.infraestructure.TemplateApiClient;
+import net.minidev.json.JSONObject;
+import org.springframework.web.client.RestTemplate;
+
 public class SheetForm {
     private String id;
     private String templateId;
@@ -7,9 +11,9 @@ public class SheetForm {
     private String templateSystemVersion;
     private String ownerId;
     private String characterId;
-    private SheetData data;
+    private JSONObject data;
 
-    public SheetForm(String id, String templateId, String templateSystemName, String templateSystemVersion, String ownerId, String characterId, SheetData data) {
+    public SheetForm(String id, String templateId, String templateSystemName, String templateSystemVersion, String ownerId, String characterId, JSONObject data) {
         this.id = id;
         this.templateId = templateId;
         this.templateSystemName = templateSystemName;
@@ -19,10 +23,10 @@ public class SheetForm {
         this.data = data;
     }
 
-    public SheetData getData() {
+    public JSONObject getData() {
         return data;
     }
-    public void setData(SheetData data) {
+    public void setData(JSONObject data) {
         this.data = data;
     }
     public String getCharacterId() {
@@ -62,5 +66,5 @@ public class SheetForm {
         this.id = id;
     }
 
-    //public SheetForm createSheetFromTemplate()
+
 }

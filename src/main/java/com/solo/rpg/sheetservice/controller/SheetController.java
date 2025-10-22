@@ -35,20 +35,31 @@ public class SheetController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<SheetCreateRequest> createSheet(ResponseBody sheet) {
+    public ResponseEntity<SheetForm> createSheet(ResponseBody sheet) {
         ObjectMapper mapper = new ObjectMapper();
         TemplateApiClient client = new TemplateApiClient(new RestTemplate());
 
-
         try {
-            SheetCreateRequest sheetRequest = mapper.convertValue(sheet, SheetCreateRequest.class);
+            SheetCreateRequest request = mapper.convertValue(sheet, SheetCreateRequest.class);
 
-            JSONObject template = client.fetchTemplate(sheetRequest.getTemplateId(), sheetRequest.getSystemName());
+            JSONObject template = null;
 
+            if(request.getTemplateId().isEmpty())  {
+                template = client.fetchTemplate(request.getSystemName(), false);
+            } else {
+                template = client.fetchTemplate(request.getTemplateId(), true);
+            }
+
+            SheetForm form = service.createSheetFromTemplate(request, template);
+
+            if(form == null) {
+                return ResponseEntity.status(500).build();
+            }
+
+            return ResponseEntity.ok().body(form);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().body(null);
     }
 
     @GetMapping("/{id}")

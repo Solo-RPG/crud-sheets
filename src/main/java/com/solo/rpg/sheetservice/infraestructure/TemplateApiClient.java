@@ -48,13 +48,11 @@ public class TemplateApiClient {
         return new JSONObject(response);
     }
 
-    public JSONObject fetchTemplate(String id, String name) {
-        if (id != null && !id.isEmpty()) {
-            return getTemplateById(id);
-        } else if (name != null && !name.isEmpty()) {
-            return getTemplateByName(name);
+    public JSONObject fetchTemplate(String name, boolean isId) {
+        if(isId) {
+            return getTemplateById(name);
         } else {
-            throw new IllegalArgumentException("Nenhum identificador fornecido");
+            return getTemplateByName(name);
         }
     }
 }
