@@ -1,35 +1,21 @@
 package com.solo.rpg.sheetservice.model;
 
-import net.minidev.json.JSONObject;
-
 import java.util.Map;
 
 public class SheetCreateRequest {
     private String templateId;
     private String systemName;
     private String ownerId;
-    private Map<String, Object> data;
+    private Map<String, Object> fields;
 
-    public SheetCreateRequest(String ownerId, Map<String, Object> data) {
-        this.ownerId = ownerId;
-        this.data = data;
-    }
-
-    public SheetCreateRequest(String value, String ownerId, Map<String, Object> data, boolean isSystemName) {
-        if (isSystemName) {
-            this.systemName = value;
-        } else {
-            this.templateId = value;
-        }
-        this.ownerId = ownerId;
-        this.data = data;
+    public SheetCreateRequest() {
     }
 
     public SheetCreateRequest(String templateId, String systemName, String ownerId, Map<String, Object> data) {
         this.templateId = templateId;
         this.systemName = systemName;
         this.ownerId = ownerId;
-        this.data = data;
+        this.fields = data;
     }
 
     public String getTemplateId() {
@@ -50,11 +36,11 @@ public class SheetCreateRequest {
     public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
-    public Map<String, Object> getData() {
-        return data;
+    public Map<String, Object> getFields() {
+        return fields;
     }
-    public void setData(Map<String, Object> data) {
-        this.data = data;
+    public void setFields(Map<String, Object> data) {
+        this.fields = data;
     }
 
 }

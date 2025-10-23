@@ -23,16 +23,16 @@ public class SheetService {
        return sheetForm;
     }
 
-    public SheetForm createSheetFromTemplate(SheetCreateRequest request, JSONObject template) {
+    public SheetForm createSheetFromTemplate(SheetCreateRequest request, JSONObject template, String userId) {
         SheetForm sheetForm = new SheetForm(
                 UUID.randomUUID().toString(),
                 request.getTemplateId(),
                 template.getAsString("system_name"),
                 template.getAsString("version"),
-                request.getOwnerId(),
+                userId,
                 null,
                 buildSheetData(
-                        request.getData(),
+                        request.getFields(),
                         (List<Map<String, Object>>) template.get("fields"),
                         ""
                 )
@@ -56,8 +56,7 @@ public class SheetService {
 
             Object value = userData.get(fieldName);
 
-            // Campos aninhados
-            if (field.containsKey("fields")) {
+            if (field.containsKey("fields") && value instanceof Map) {
                 Map<String, Object> nestedUserData = (Map<String, Object>) value;
                 List<Map<String, Object>> nestedTemplateFields = (List<Map<String, Object>>) field.get("fields");
                 JSONObject nestedData = buildSheetData(nestedUserData, nestedTemplateFields, currentPath);

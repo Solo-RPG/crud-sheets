@@ -9,7 +9,7 @@ import java.util.Map;
 public class TemplateApiClient {
 
     private final RestTemplate restTemplate;
-    private final String url = "http://localhost:8000/api/templates/";
+    private final String url = "http://localhost:7000/api/templates/";
 
     public TemplateApiClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
