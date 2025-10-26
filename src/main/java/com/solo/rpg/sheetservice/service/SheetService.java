@@ -83,7 +83,7 @@ public class SheetService {
         @SuppressWarnings("unchecked")
         List<Object> options = (List<Object>) templateField.get("options");
 
-        if (options != null && !options.isEmpty() && !options.contains(value)) {
+        if (expectedType.equals("string") && options != null && !options.isEmpty() && !options.contains(value)) {
             throw new IllegalArgumentException("Valor inválido para " + fieldPath + ". Opções: " + options);
         }
     }

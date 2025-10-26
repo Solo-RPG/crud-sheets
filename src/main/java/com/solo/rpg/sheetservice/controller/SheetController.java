@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -32,12 +33,15 @@ public class SheetController {
 
     @GetMapping("/")
     private Object getSheets() {
-        List<SheetForm> sheets = repository.findAll();
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
         }
+
+        Claims claims = (Claims) auth.getPrincipal();
+        String userId = claims.get("userId", String.class);
+
+        List<SheetForm> sheets = repository.findAllById(Collections.singleton(userId));
 
         if(sheets.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -78,6 +82,7 @@ public class SheetController {
 
             return ResponseEntity.ok().body(form);
         } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -89,13 +94,21 @@ public class SheetController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
         }
 
+        Claims claims = (Claims) auth.getPrincipal();
+        String userId = claims.get("userId", String.class);
+
         SheetForm sheet = repository.findById(id).orElse(null);
 
         if(sheet == null) {
             return ResponseEntity.noContent().build();
         }
 
-        return sheet;
+        if(sheet.getOwnerId().equals(userId)) {
+            return sheet;
+        }
+
+        return ResponseEntity.status(500).build();
+
     }
 
     @GetMapping("/by-user_id/{id}")
