@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sheets")
@@ -57,16 +58,13 @@ public class SheetController {
 
         try {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth == null || !auth.isAuthenticated()) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
-            }
 
             Claims claims = (Claims) auth.getPrincipal();
             String userId = claims.get("userId", String.class);
 
             SheetCreateRequest request = mapper.convertValue(sheet, SheetCreateRequest.class);
 
-            JSONObject template = null;
+            Map<String, Object> template = null;
 
             if(request.getTemplateId().isEmpty())  {
                 template = client.fetchTemplate(request.getSystemName(), false);

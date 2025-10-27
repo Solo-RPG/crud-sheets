@@ -23,12 +23,14 @@ public class SheetService {
        return sheetForm;
     }
 
-    public SheetForm createSheetFromTemplate(SheetCreateRequest request, JSONObject template, String userId) {
+    public SheetForm createSheetFromTemplate(SheetCreateRequest request, Map<String, Object> template, String userId) {
+        JSONObject templateObj = new JSONObject(template);
+
         SheetForm sheetForm = new SheetForm(
                 UUID.randomUUID().toString(),
                 request.getTemplateId(),
-                template.getAsString("system_name"),
-                template.getAsString("version"),
+                templateObj.getAsString("system_name"),
+                templateObj.getAsString("version"),
                 userId,
                 null,
                 buildSheetData(

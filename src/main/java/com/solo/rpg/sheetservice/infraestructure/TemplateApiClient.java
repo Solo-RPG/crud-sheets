@@ -38,7 +38,7 @@ public class TemplateApiClient {
         return new JSONObject(response);
     }
 
-    public JSONObject getTemplateById(String templateId) {
+    public Map<String, Object> getTemplateById(String templateId) {
         String endpoint = url + "by-id/" + templateId;
         HttpEntity entity = new HttpEntity<>(createHeaders());
 
@@ -49,7 +49,7 @@ public class TemplateApiClient {
             throw new IllegalArgumentException("Template não encontrado");
         }
 
-        return new JSONObject(response.getBody());
+        return (Map<String, Object>) response.getBody();
     }
 
     public JSONObject getTemplateByName(String templateName) {
@@ -63,7 +63,7 @@ public class TemplateApiClient {
         return new JSONObject(response);
     }
 
-    public JSONObject fetchTemplate(String name, boolean isId) {
+    public Map<String, Object> fetchTemplate(String name, boolean isId) {
         return isId ? getTemplateById(name) : getTemplateByName(name);
     }
 }
